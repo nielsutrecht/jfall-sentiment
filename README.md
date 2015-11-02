@@ -1,5 +1,7 @@
 # Sentiment Analysis of Social Media Posts with Apache Spark
 
+This repository will contain the sample source code and presentation shortly after JFall 2015.
+
 ## Links
 * Reddit
   * [What is Reddit?](https://en.wikipedia.org/wiki/Reddit)
