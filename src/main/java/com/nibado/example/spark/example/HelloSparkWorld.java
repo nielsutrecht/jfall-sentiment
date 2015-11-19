@@ -23,12 +23,13 @@ public class HelloSparkWorld {
                 .map(String::toLowerCase)                       //toLower case
                 .map(s -> s.replaceAll("[^a-z ]+", ""))         //Strip anything not alphabetic or space
                 .flatMap(s -> Arrays.asList(s.split("\\s+")))   //Split on whitespace
-                .filter(s -> s.length() >= 2)                   //Filter words shorter than 2 characters
+                .filter(s -> s.length() >= 2)                   //Remove words shorter than 2 characters
                 .mapToPair(s -> new Tuple2<>(s, 1))             //Map words to (word, count) tuples
                 .reduceByKey((a, b) -> a + b)                   //Reduce
+                .filter(t -> t._2() > 1)                        //Only keep counts larger than 1
                 .collect();                                     //Collect into a list
 
-		//Print top 10 results
+		//Print top 10 results descending by count
         wordCounts
                 .stream()
                 .sorted((a, b) -> Integer.compare(b._2(), a._2()))

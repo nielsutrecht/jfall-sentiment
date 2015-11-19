@@ -12,6 +12,7 @@ import scala.Tuple2;
 import java.io.*;
 import java.util.List;
 
+import static com.nibado.example.spark.Mappers.toDayOfWeek;
 import static java.util.Arrays.asList;
 
 public class SparkFacade {
@@ -26,12 +27,6 @@ public class SparkFacade {
 
     public void init() {
         sc = new JavaSparkContext(config);
-    }
-
-    private JavaRDD<Comment> asCommentStream(String file, boolean filterDeleted) {
-        return sc.textFile(file)
-                .map(Mappers::toComment)
-                .filter(c -> !filterDeleted || !c.isDeleted());
     }
 
     public JavaRDD<AnalysedComment> asAnalysedCommentStream(String file) {
@@ -66,7 +61,7 @@ public class SparkFacade {
 
         results = comments
                 .filter(AnalysedComment::isNegative)
-                .mapToPair(c -> new Tuple2<>(Mappers.toDayOfWeek(c.getDateTime()), 1))
+                .mapToPair(c -> new Tuple2<>(toDayOfWeek(c.getDateTime()), 1))
                 .reduceByKey((a, b) -> a + b)
                 .collect();
 
@@ -74,14 +69,14 @@ public class SparkFacade {
 
         results = comments
                 .filter(AnalysedComment::isPositive)
-                .mapToPair(c -> new Tuple2<>(Mappers.toDayOfWeek(c.getDateTime()), 1))
+                .mapToPair(c -> new Tuple2<>(toDayOfWeek(c.getDateTime()), 1))
                 .reduceByKey((a, b) -> a + b)
                 .collect();
 
         writeTuples(results, new File(output, "dayPositive.csv"));
 
         results = comments
-                .mapToPair(c -> new Tuple2<>(Mappers.toDayOfWeek(c.getDateTime()), 1))
+                .mapToPair(c -> new Tuple2<>(toDayOfWeek(c.getDateTime()), 1))
                 .reduceByKey((a, b) -> a + b)
                 .collect();
 
@@ -119,6 +114,12 @@ public class SparkFacade {
                 .forEach(outs::println);
 
         outs.close();
+    }
+
+    private JavaRDD<Comment> asCommentStream(String file, boolean filterDeleted) {
+        return sc.textFile(file)
+                .map(Mappers::toComment)
+                .filter(c -> !filterDeleted || !c.isDeleted());
     }
 
     public void toObjectFile(String inFile, String outFile, Analyser analyser) {
