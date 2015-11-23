@@ -1,6 +1,7 @@
 # Sentiment Analysis of Social Media Posts with Apache Spark
 
-This repository contains the sample source code and presentation used in the ignite session I have on [JFall 2015](http://www.nljug.org/jfall/2015/).
+This repository contains the sample source code and presentation used in the ignite session I have on [JFall 2015](http://www.nljug.org/jfall/2015/). 
+I also wrote a blog post on the subject which you can find [here](http://niels.nu/blog/2015/sentiment-spark.html).
 
 ## Presentation
 
